@@ -1,13 +1,39 @@
+import ctypes
+import glob
+import os
+import sys
+
 import numpy as np
 from fastembed import TextEmbedding
 from tqdm import tqdm
 
 
+def _preload_cuda_libs() -> None:
+    venv_dir = os.path.dirname(sys.executable) + "/../lib"
+    pattern = os.path.join(venv_dir, "python*/site-packages/nvidia/*/lib")
+    loaded = 0
+    for lib_dir in sorted(glob.glob(pattern)):
+        if not os.path.isdir(lib_dir):
+            continue
+        for lib_path in sorted(glob.glob(os.path.join(lib_dir, "lib*"))):
+            try:
+                ctypes.CDLL(lib_path, mode=ctypes.RTLD_GLOBAL)
+                loaded += 1
+            except OSError:
+                pass
+    if loaded == 0:
+        msg = (
+            "CUDA libraries not found. Install them with:\n"
+            "  pip install nvidia-cublas-cu12 nvidia-cudnn-cu12 nvidia-curand-cu12 \\\n"
+            "    nvidia-cuda-runtime-cu12 nvidia-cufft-cu12 nvidia-cusparse-cu12 \\\n"
+            "    nvidia-cusolver-cu12\n"
+        )
+        raise RuntimeError(msg)
+
 def read_log_file(file_path: str) -> list[str]:
     """Read a log file and return non-empty lines with trailing newlines stripped."""
     with open(file_path, "r", encoding="utf-8") as f:
         return [line.rstrip("\n") for line in f if line.rstrip("\n")]
-
 
 def generate_embeddings(
     lines: list[str],
@@ -29,7 +55,11 @@ def generate_embeddings(
     Returns:
         A tuple of (number_of_embeddings, embedding_dimension).
     """
-    model = TextEmbedding(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    _preload_cuda_libs()
+    model = TextEmbedding(
+        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        cuda=True,
+    )
 
     for i in tqdm(range(0, len(lines), batch_size), desc="Generating embeddings"):
         batch = lines[i:i + batch_size]
@@ -46,7 +76,6 @@ def generate_embeddings(
 
     mmap.flush()
     return len(lines), dim
-
 
 if __name__ == "__main__":
     input_file = "data/server.log.2026-07-16"

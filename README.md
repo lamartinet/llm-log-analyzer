@@ -10,8 +10,18 @@ Generate vector embeddings from log files for similarity search and analysis.
 
 ## Install
 
+### CPU (default)
+
 ```bash
 pip install -e .
+```
+
+### GPU (CUDA 12)
+
+Requires NVIDIA drivers and a CUDA-compatible GPU.
+
+```bash
+pip install -e ".[gpu]" --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
 ```
 
 ## Usage
@@ -58,3 +68,19 @@ print(embeddings[0][:5])  # first 5 dimensions of line 0
 - fastembed
 - numpy
 - tqdm
+
+### GPU Acceleration (optional)
+
+Install `onnxruntime-gpu` via the `[gpu]` extra for up to **10x faster** embedding generation using NVIDIA CUDA 12 GPUs.
+
+```bash
+pip install -e ".[gpu]" --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
+```
+
+Also install the CUDA runtime libraries (required by onnxruntime-gpu):
+
+```bash
+pip install nvidia-cublas-cu12 nvidia-cudnn-cu12 nvidia-curand-cu12 \
+  nvidia-cuda-runtime-cu12 nvidia-cufft-cu12 nvidia-cusparse-cu12 \
+  nvidia-cusolver-cu12
+```
