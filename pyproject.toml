@@ -1,0 +1,9 @@
+[project]
+name = "llm-log-analyzer"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["fastembed"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

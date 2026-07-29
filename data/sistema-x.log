@@ -1,0 +1,4 @@
+2023-10-25 10:00:01 [INFO] Iniciando o serviço de autenticação... Server starting up.
+2023-10-25 10:00:05 [WARNING] Connection timeout com o banco de dados. Retrying in 5 seconds.
+2023-10-25 10:00:10 [ERROR] Falha crítica ao processar pagamento: NullPointerException at PaymentService.java:42. User session aborted.
+2023-10-25 10:00:15 [DEBUG] Cache revalidado com sucesso. All 1500 keys were refreshed in 230ms
