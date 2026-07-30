@@ -2,10 +2,7 @@
 name = "llm-log-analyzer"
 version = "0.1.0"
 requires-python = ">=3.10"
-dependencies = ["fastembed"]
-
-[project.optional-dependencies]
-gpu = ["onnxruntime-gpu"]
+dependencies = ["sentence-transformers"]
 
 [build-system]
 requires = ["setuptools"]

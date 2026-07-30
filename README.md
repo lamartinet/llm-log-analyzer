@@ -16,13 +16,23 @@ Generate vector embeddings from log files for similarity search and analysis.
 pip install -e .
 ```
 
-### GPU (CUDA 12)
-
-Requires NVIDIA drivers and a CUDA-compatible GPU.
+### GPU (CUDA — NVIDIA)
 
 ```bash
-pip install -e ".[gpu]" --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
+pip install torch --index-url https://download.pytorch.org/whl/cu124
+pip install -e .
 ```
+
+### GPU (ROCm — AMD)
+
+Requires ROCm drivers and a compatible AMD GPU.
+
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/rocm7.0
+pip install -e .
+```
+
+> The code auto-detects the best available device at runtime (GPU > CPU). No configuration needed.
 
 ## Usage
 
@@ -54,7 +64,7 @@ print(embeddings[0][:5])  # first 5 dimensions of line 0
 
 ## Model
 
-[sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) via FastEmbed (ONNX runtime).
+[sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) via SentenceTransformers (PyTorch).
 
 | Property | Value |
 |----------|-------|
@@ -65,22 +75,18 @@ print(embeddings[0][:5])  # first 5 dimensions of line 0
 ## Dependencies
 
 - Python >= 3.10
-- fastembed
+- sentence-transformers
+- torch (PyTorch)
 - numpy
 - tqdm
 
 ### GPU Acceleration (optional)
 
-Install `onnxruntime-gpu` via the `[gpu]` extra for up to **10x faster** embedding generation using NVIDIA CUDA 12 GPUs.
+PyTorch handles GPU detection automatically (CUDA or ROCm). Install the appropriate PyTorch build:
 
-```bash
-pip install -e ".[gpu]" --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
-```
+| GPU | PyTorch index |
+|-----|---------------|
+| NVIDIA (CUDA 12.4) | `https://download.pytorch.org/whl/cu124` |
+| AMD (ROCm 7.x) | `https://download.pytorch.org/whl/rocm7.0` |
 
-Also install the CUDA runtime libraries (required by onnxruntime-gpu):
-
-```bash
-pip install nvidia-cublas-cu12 nvidia-cudnn-cu12 nvidia-curand-cu12 \
-  nvidia-cuda-runtime-cu12 nvidia-cufft-cu12 nvidia-cusparse-cu12 \
-  nvidia-cusolver-cu12
-```
+The code logs which device is being used at startup (`Using GPU: AMD Radeon RX 9060 XT` or `Using CPU (no GPU detected)`).
