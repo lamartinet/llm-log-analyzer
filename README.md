@@ -19,7 +19,7 @@ pip install -e .
 ### GPU (CUDA — NVIDIA)
 
 ```bash
-pip install torch --index-url https://download.pytorch.org/whl/cu124
+pip install torch --index-url https://download.pytorch.org/whl/cu128
 pip install -e .
 ```
 
